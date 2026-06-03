@@ -24,3 +24,5 @@ def root():
         "message": "AlphaEdge AI Server is running",
         "status": "success"
     }
+
+
