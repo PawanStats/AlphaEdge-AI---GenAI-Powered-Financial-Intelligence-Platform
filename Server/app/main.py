@@ -1,14 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import chat
+from app.routes import chat, stocks, portfolio  # ← add portfolio
 
 app = FastAPI(
     title="AlphaEdge AI Server",
     description="GenAI Financial Intelligence API",
     version="1.0.0"
 )
-
-app.include_router(chat.router, prefix='/api')
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,9 +18,11 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return{
+    return {
         "message": "AlphaEdge AI Server is running",
-        "status": "success"
+        "status": "ok"
     }
 
-
+app.include_router(chat.router,      prefix="/api")
+app.include_router(stocks.router,    prefix="/api")
+app.include_router(portfolio.router, prefix="/api")  # ← add this
