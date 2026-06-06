@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import chat, stocks, portfolio  # ← add portfolio
+from app.routes import chat, stocks, portfolio, news
 
 app = FastAPI(
     title="AlphaEdge AI Server",
@@ -26,3 +26,4 @@ def root():
 app.include_router(chat.router,      prefix="/api")
 app.include_router(stocks.router,    prefix="/api")
 app.include_router(portfolio.router, prefix="/api")  # ← add this
+app.include_router(news.router,      prefix="/api")
