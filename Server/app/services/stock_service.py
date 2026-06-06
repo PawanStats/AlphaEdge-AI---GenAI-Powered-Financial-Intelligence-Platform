@@ -22,9 +22,8 @@ def get_stock_data(ticker: str) -> dict:
             }
 
         # Get price from history (last closing price)
-        price = round(float(hist["Close"].iloc[-1]), 2)
-        prev_close = round(float(hist["Close"].iloc[-2]), 2) if len(hist) > 1 else price
-
+        price = round(float(hist["Close"].iloc[-1].iloc[0]), 2)
+        prev_close = round(float(hist["Close"].iloc[-2].iloc[0]), 2) if len(hist) > 1 else price
         # Build history array for chart
         history = [
             {
