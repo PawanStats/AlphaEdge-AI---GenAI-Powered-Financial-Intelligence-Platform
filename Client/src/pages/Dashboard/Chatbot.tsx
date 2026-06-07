@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import api from "../../api/axiosInstance";
+import { useSearchParams } from "react-router-dom";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,7 +17,13 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setInput(q);
+  }, [searchParams]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
