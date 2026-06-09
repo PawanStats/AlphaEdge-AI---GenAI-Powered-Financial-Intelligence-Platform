@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 import requests
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
 
 router = APIRouter()
+
+# News cache — refreshes every 15 minutes
+news_cache = {"data": None, "time": None}
 
 def clean_text(text: str) -> str:
     """Remove messy characters from text."""
@@ -16,6 +19,12 @@ def clean_text(text: str) -> str:
 
 @router.get("/news")
 async def get_news():
+    # Return cached news if less than 15 minutes old
+    if news_cache["data"] and news_cache["time"]:
+        age = datetime.now() - news_cache["time"]
+        if age < timedelta(minutes=15):
+            return news_cache["data"]
+
     try:
         api_key = os.getenv("FINNHUB_KEY")
 
@@ -38,18 +47,14 @@ async def get_news():
                 "error":    f"Finnhub error: {raw}"
             }
 
-        # Filter only finance/business relevant news
-        # and take top 10 only
         articles = []
         for item in raw[:10]:
             headline = clean_text(item.get("headline", ""))
             summary  = clean_text(item.get("summary",  ""))
 
-            # Skip empty headlines
             if not headline:
                 continue
 
-            # Convert unix timestamp to readable date
             timestamp = item.get("datetime", 0)
             try:
                 date_str = datetime.fromtimestamp(
@@ -69,11 +74,17 @@ async def get_news():
                 "sentiment": "Neutral"
             })
 
-        return {
+        result = {
             "articles": articles,
             "total":    len(articles),
             "error":    None
         }
+
+        # Save to cache
+        news_cache["data"] = result
+        news_cache["time"] = datetime.now()
+
+        return result
 
     except Exception as e:
         return {
