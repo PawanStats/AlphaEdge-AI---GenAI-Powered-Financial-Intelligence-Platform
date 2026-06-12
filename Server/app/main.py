@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.db import engine
 from sqlalchemy import text
+# from app.db import engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import chat, stocks, portfolio, news
 from app.routes import auth
@@ -10,14 +10,14 @@ app = FastAPI(
     description="GenAI Financial Intelligence API",
     version="1.0.0"
 )
-@app.on_event("startup")
-async def startup():
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-            print("✅ PostgreSQL Connected Successfully")
-    except Exception as e:
-        print("❌ Database Connection Error:", e)
+# @app.on_event("startup")
+# async def startup():
+#     try:
+#         with engine.connect() as conn:
+#             conn.execute(text("SELECT 1"))
+#             print("✅ PostgreSQL Connected Successfully")
+#     except Exception as e:
+#         print("❌ Database Connection Error:", e)
 
 app.add_middleware(
     CORSMiddleware,
